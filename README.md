@@ -39,8 +39,3 @@ Remove order and return a success message
 ### 🚫 No database required  
 Uses an **in‑memory ConcurrentHashMap** for storage (easy to replace with MongoDB or PostgreSQL later).
 
----
-
-## 🧱 Architecture Overview
-
-The system follows standard Spring Boot layered architecture:
