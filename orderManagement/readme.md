@@ -1,46 +1,31 @@
-# 🛒 Order Management System (Spring Boot)
+# 🍔 Order Management System (Spring Boot + MongoDB)
 
-A simple and clean **Order Management REST API** built using **Java**, **Spring Boot**, and **in‑memory storage**.  
-This project demonstrates:
+A simple **Order Management REST API** built using **Java 17**, **Spring Boot**, and **MongoDB**.  
+Originally built with an in‑memory data store, this version now uses **MongoDB** as the persistent database.
 
-- REST API design  
-- Layered architecture (Controller → Service → Model → DTO)  
-- CRUD operations  
-- DTO validation  
-- Unit testing (JUnit 5)  
-- Proper folder structure and clean code practices  
-
-This project was built as part of a learning objective to understand Spring MVC, REST APIs, and unit testing.
+This API allows clients to create, read, update, and delete food orders containing menu items such as **Burger**, **Pizza**, and **Salad**.
 
 ---
 
 ## 🚀 Features
 
-### ✅ Create Orders  
-Supports two types of orders:
-- **Takeout**
-- **Delivery** (requires deliveryAddress)
-
-### ✅ List All Orders  
-Returns all existing orders with:
-- Order type
-- Items & quantities
-- Subtotal (calculated automatically)
-
-### ✅ Get Single Order  
-Lookup by ID (UUID)
-
-### ✅ Update Order  
-Modify orderType, items, or deliveryAddress
-
-### ✅ Delete Order  
-Remove order and return a success message
-
-### 🚫 No database required  
-Uses an **in‑memory ConcurrentHashMap** for storage (easy to replace with MongoDB or PostgreSQL later).
+- Create new orders  
+- Update existing orders  
+- Fetch all orders  
+- Fetch an order by ID  
+- Delete an order  
+- MongoDB persistence  
+- Validation using Jakarta Validation (`@NotNull`, `@NotEmpty`, `@Min`)  
+- Uses `UUID` as `_id` for MongoDB documents  
 
 ---
 
-## 🧱 Architecture Overview
+## 🧰 Tech Stack
 
-The system follows standard Spring Boot layered architecture:
+| Layer | Technology |
+|-------|------------|
+| Backend | Spring Boot |
+| Language | Java |
+| Database | MongoDB |
+| Tools | MongoDB Compass, Postman |
+| Build System | Maven |

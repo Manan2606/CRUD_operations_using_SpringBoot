@@ -4,21 +4,23 @@ import com.example.orderManagement.dto.CreateOrderRequest;
 import com.example.orderManagement.dto.UpdateOrderRequest;
 import com.example.orderManagement.model.Order;
 import com.example.orderManagement.model.OrderItem;
-
+import com.example.orderManagement.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
 
-    // In-memory store instead of a database
-    private final Map<UUID, Order> store = new ConcurrentHashMap<>();
+    private final OrderRepository repo;
+
+    public OrderServiceImpl(OrderRepository repo) {
+        this.repo = repo;
+    }
 
     @Override
     public Order createOrder(CreateOrderRequest request) {
-
         Order order = new Order();
         order.setId(UUID.randomUUID());
         order.setOrderType(request.getOrderType());
@@ -26,51 +28,44 @@ public class OrderServiceImpl implements OrderService {
 
         List<OrderItem> items = request.getItems().stream()
                 .map(i -> new OrderItem(i.getMenu(), i.getQuantity()))
-                .toList();
+                .collect(Collectors.toList());
 
         order.setItems(items);
-
-        // uses menu.price * quantity internally
         order.recomputeSubtotal();
 
-        store.put(order.getId(), order);
-
-        return order;
+        return repo.save(order);
     }
 
     @Override
     public List<Order> getAllOrders() {
-        return new ArrayList<>(store.values());
+        return repo.findAll();
     }
 
     @Override
     public Order getOrderById(UUID id) {
-        return store.get(id);
+        return repo.findById(id).orElse(null);
     }
 
     @Override
     public Order updateOrder(UUID id, UpdateOrderRequest request) {
+        return repo.findById(id)
+                .map(existing -> {
+                    existing.setOrderType(request.getOrderType());
+                    existing.setDeliveryAddress(request.getDeliveryAddress());
 
-        Order existing = store.get(id);
+                    List<OrderItem> items = request.getItems().stream()
+                            .map(i -> new OrderItem(i.getMenu(), i.getQuantity()))
+                            .collect(Collectors.toList());
 
-        if (existing == null)
-            return null;
-
-        existing.setOrderType(request.getOrderType());
-        existing.setDeliveryAddress(request.getDeliveryAddress());
-
-        List<OrderItem> items = request.getItems().stream()
-                .map(i -> new OrderItem(i.getMenu(), i.getQuantity()))
-                .toList();
-
-        existing.setItems(items);
-        existing.recomputeSubtotal();
-
-        return existing;
+                    existing.setItems(items);
+                    existing.recomputeSubtotal();
+                    return repo.save(existing);
+                })
+                .orElse(null);
     }
 
     @Override
     public void deleteOrder(UUID id) {
-        store.remove(id);
+        repo.deleteById(id);
     }
 }

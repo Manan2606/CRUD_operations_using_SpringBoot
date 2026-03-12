@@ -1,15 +1,21 @@
 package com.example.orderManagement.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.*;
 
+@Document(collection = "orders")
 public class Order {
+
+    @Id
     private UUID id;
+
     private OrderType orderType;
-    private String deliveryAddress;          
+    private String deliveryAddress;
     private List<OrderItem> items = new ArrayList<>();
-    private double subtotal;                 
-    
-    public UUID getId() { return id; }
+    private double subtotal;
+
+        public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
 
     public OrderType getOrderType() { return orderType; }
@@ -26,7 +32,9 @@ public class Order {
 
     public void recomputeSubtotal() {
         double s = (items == null) ? 0.0 :
-            items.stream().mapToDouble(i -> i.getMenu().price * i.getQuantity()).sum();
+                items.stream()
+                        .mapToDouble(i -> i.getMenu().price * i.getQuantity())
+                        .sum();
         this.subtotal = s;
     }
 }
